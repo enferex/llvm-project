@@ -1746,6 +1746,7 @@ unsigned DIExpression::ExprOperand::getSize() const {
   case dwarf::DW_OP_constu:
   case dwarf::DW_OP_consts:
   case dwarf::DW_OP_deref_size:
+  case dwarf::DW_OP_xderef_size:
   case dwarf::DW_OP_plus_uconst:
   case dwarf::DW_OP_LLVM_tag_offset:
   case dwarf::DW_OP_LLVM_entry_value:
@@ -1806,7 +1807,8 @@ bool DIExpression::isValid() const {
 
     uint64_t Op = I->getOp();
     if ((Op >= dwarf::DW_OP_reg0 && Op <= dwarf::DW_OP_reg31) ||
-        (Op >= dwarf::DW_OP_breg0 && Op <= dwarf::DW_OP_breg31))
+        (Op >= dwarf::DW_OP_breg0 && Op <= dwarf::DW_OP_breg31) ||
+        (Op >= dwarf::DW_OP_lit0 && Op <= dwarf::DW_OP_lit31))
       continue;
 
     // Check that the operand is valid.
@@ -1873,7 +1875,7 @@ bool DIExpression::isValid() const {
     case dwarf::DW_OP_deref:
     case dwarf::DW_OP_deref_size:
     case dwarf::DW_OP_xderef:
-    case dwarf::DW_OP_lit0:
+    case dwarf::DW_OP_xderef_size:
     case dwarf::DW_OP_not:
     case dwarf::DW_OP_dup:
     case dwarf::DW_OP_regx:

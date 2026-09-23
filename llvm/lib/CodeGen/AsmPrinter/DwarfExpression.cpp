@@ -561,7 +561,8 @@ bool DwarfExpression::addExpression(
     auto Op = ExprCursor.take();
     uint64_t OpNum = Op->getOp();
 
-    if (OpNum >= dwarf::DW_OP_reg0 && OpNum <= dwarf::DW_OP_reg31) {
+    if ((OpNum >= dwarf::DW_OP_reg0 && OpNum <= dwarf::DW_OP_reg31) ||
+        (OpNum >= dwarf::DW_OP_lit0 && OpNum <= dwarf::DW_OP_lit31)) {
       emitOp(OpNum);
       continue;
     } else if (OpNum >= dwarf::DW_OP_breg0 && OpNum <= dwarf::DW_OP_breg31) {
@@ -682,7 +683,6 @@ bool DwarfExpression::addExpression(
     case dwarf::DW_OP_shl:
     case dwarf::DW_OP_shr:
     case dwarf::DW_OP_shra:
-    case dwarf::DW_OP_lit0:
     case dwarf::DW_OP_not:
     case dwarf::DW_OP_dup:
     case dwarf::DW_OP_push_object_address:
@@ -753,6 +753,11 @@ bool DwarfExpression::addExpression(
     case dwarf::DW_OP_xderef:
       assert(!isRegisterLocation());
       emitOp(dwarf::DW_OP_xderef);
+      break;
+    case dwarf::DW_OP_xderef_size:
+      assert(!isRegisterLocation());
+      emitOp(dwarf::DW_OP_xderef_size);
+      emitData1(Op->getArg(0));
       break;
     case dwarf::DW_OP_deref_size:
       emitOp(dwarf::DW_OP_deref_size);
